@@ -54,6 +54,10 @@ void loop() {
     delay(20);
 }
 
+
+
+//Considers all controller inputs and returns a speed
+//that the board should accelerate/decelerate to
 int getTargetSpeed() {
   int minIn = 3;
   int maxIn = 127;
@@ -77,6 +81,10 @@ int getTargetSpeed() {
   return throttle;
 }
 
+
+
+//Considers the currentSpeed and targetSpeed to determine what
+//speed we should use next to gradually approach the target speed
 int getNewSpeed(int currentSpeed, int targetSpeed) {
   int speedDifference = targetSpeed - currentSpeed;
   
@@ -90,6 +98,9 @@ int getNewSpeed(int currentSpeed, int targetSpeed) {
   else return currentSpeed - maxDeceleration;
 }
 
+
+
+//Returns true if the input signal is corrupted
 boolean filterExtremes(int xAcc, int yAcc, int zAcc, int xJoy, int yJoy) {
   if (!(
     ((xAcc > 505 && xAcc < 515) || (xAcc > -515 && xAcc < -505)) &&
@@ -100,6 +111,10 @@ boolean filterExtremes(int xAcc, int yAcc, int zAcc, int xJoy, int yJoy) {
   else return false;
 }
 
+
+
+
+//Checks whether the current reading is a duplicate of the last
 bool isDuplicate() {
   if (
     nunchuk_joystickX() == last_xJoy &&
@@ -122,6 +137,12 @@ bool isDuplicate() {
       return false;
     }
 }
+
+
+
+
+
+//DEBUG FUNCTIONS
 
 void printSpeedStats() {
     Serial.print("Current: ");
