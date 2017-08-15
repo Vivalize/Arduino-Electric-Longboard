@@ -34,7 +34,7 @@ void loop() {
         if (!isDuplicate()) lastValidReadTime = millis();
           
 //        nunchuk_print();
-        targetSpeed = throttle();
+        targetSpeed = getTargetSpeed();
         if (nunchuk_buttonZ()) newSpeed = getNewSpeed(currentSpeed, zSpeed);
         else newSpeed = getNewSpeed(currentSpeed, targetSpeed);
         printSpeedStats();
@@ -53,7 +53,7 @@ void loop() {
     delay(20);
 }
 
-int throttle() {
+int getTargetSpeed() {
   int minIn = 3;
   int maxIn = 127;
   int maxOut = 1400;
