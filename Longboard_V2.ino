@@ -82,7 +82,7 @@ int getTargetSpeed() {
   else throttle = map(nunchuk_joystickY(), minIn, maxIn, minOut, ((maxOut-minOut)*throttleCap)+minOut );
 
   //Apply 2x modifier if pressing C
-  if (nunchuk_buttonC()) throttle = ((throttle-minIn)*cSpeedModifier)+minIn;
+  if (nunchuk_buttonC()) throttle = ((throttle-minOut)*cSpeedModifier)+minOut;
 
   //Ensure signal is within bounds
   if (throttle < minOut) throttle = minOut;
