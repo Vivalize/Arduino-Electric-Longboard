@@ -46,15 +46,13 @@ void loop() {
 
         inTimeout = false;
         if (!isDuplicate()) lastValidReadTime = millis();
-          
-//        nunchuk_print();
+        
         targetSpeed = getTargetSpeed();
         newSpeed = getNewSpeed(currentSpeed, targetSpeed);
         printSpeedStats();
 
         motor.write(newSpeed);
         currentSpeed = newSpeed;
-
       }
       
       //If there's an error reading the nunchuk (such as from
@@ -183,5 +181,9 @@ void printVars(int xJoy, int yJoy, int xAcc, int yAcc, int zAcc, int zBut, int c
     Serial.print(zBut);
     Serial.print(", ");
     Serial.print(cBut);
+}
+
+void printNunchukStats() {
+  nunchuk_print();
 }
 
