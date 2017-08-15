@@ -44,6 +44,7 @@ void loop() {
         filterExtremes(nunchuk_accelX(), nunchuk_accelY(), nunchuk_accelZ(), nunchuk_joystickX(), nunchuk_joystickY()) &&
         (!inTimeout || !isDuplicate())) {
 
+        if (inTimeout) Serial.println("Nunchuk Connected");
         inTimeout = false;
         if (!isDuplicate()) lastValidReadTime = millis();
         
@@ -60,7 +61,7 @@ void loop() {
       else {
         if (millis() - lastValidReadTime > timeOut) {
           motor.writeMicroseconds(minOut);
-          if (!inTimeout) Serial.println("Timeout");
+          if (!inTimeout) Serial.println("Nunchuk Disconnected");
           inTimeout = true;
         }
       }
