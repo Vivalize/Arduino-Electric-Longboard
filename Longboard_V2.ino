@@ -7,7 +7,9 @@ int maxAcceleration = 5;
 int maxDeceleration = 10;
 int currentSpeed = 1000;
 int targetSpeed = 0;
-int zSpeed = 1150;
+double throttleCap = .4;
+double zThrottle = .15;
+double cSpeedModifier = 2.0;
 int newSpeed = 0;
 int numberOfDuplicates = 0;
 int timeOut = 1000;
@@ -35,8 +37,7 @@ void loop() {
           
 //        nunchuk_print();
         targetSpeed = getTargetSpeed();
-        if (nunchuk_buttonZ()) newSpeed = getNewSpeed(currentSpeed, zSpeed);
-        else newSpeed = getNewSpeed(currentSpeed, targetSpeed);
+        newSpeed = getNewSpeed(currentSpeed, targetSpeed);
         printSpeedStats();
 
         motor.write(newSpeed);
@@ -56,15 +57,23 @@ void loop() {
 int getTargetSpeed() {
   int minIn = 3;
   int maxIn = 127;
-  int maxOut = 1400;
-  int maxCOut = 2000;
+  int maxOut = 2000;
   int minOut = 1000;
-
   int throttle = 0;
-  if (nunchuk_buttonC()) throttle = map(nunchuk_joystickY(), minIn, maxIn, minOut, maxOut);
-  else throttle = map(nunchuk_joystickY(), minIn, maxIn, minOut, maxCOut);
+
+  //If using Z
+  if (nunchuk_buttonZ()) throttle = ((maxOut-minOut)*zThrottle)+minOut;
+
+  //Otherwise use joystick reading
+  else throttle = map(nunchuk_joystickY(), minIn, maxIn, minOut, ((maxOut-minOut)*throttleCap)+minOut );
+
+  //Apply 2x modifier if pressing C
+  if (nunchuk_buttonC()) throttle = ((throttle-minIn)*cSpeedModifier)+minIn;
+
+  //Ensure signal is within bounds
   if (throttle < minOut) throttle = minOut;
-  if (throttle > maxCOut) throttle = maxCOut;
+  if (throttle > maxOut) throttle = maxOut;
+  
   return throttle;
 }
 
