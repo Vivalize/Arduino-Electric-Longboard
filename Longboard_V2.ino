@@ -2,23 +2,35 @@
 #include <Servo.h>
 #include "Nunchuk.h"
 
-Servo motor;
+//Personal Constants
 int maxAcceleration = 5;
 int maxDeceleration = 10;
-int currentSpeed = 1000;
-int targetSpeed = 0;
 double throttleCap = .4;
 double zThrottle = .15;
 double cSpeedModifier = 2.0;
-int newSpeed = 0;
-int numberOfDuplicates = 0;
+
+//Hardware Constants
+int minIn = 3;
+int maxIn = 127;
+int minOut = 1000;
+int maxOut = 2000;
 int timeOut = 1000;
+
+//Other variables
+int currentSpeed;
+int targetSpeed;
+int newSpeed;
+int numberOfDuplicates = 0;
 unsigned long lastValidReadTime = millis();
 boolean inTimeout = false;
 int last_xJoy = 0, last_yJoy = 0, last_xAcc = 0, last_yAcc = 0, last_zAcc = 0, last_zBut = 0, last_cBut = 0;
+Servo motor;
 
 void setup() {
     Serial.begin(9600);
+    currentSpeed = minOut;
+    targetSpeed = minOut;
+    newSpeed = minOut;
     Wire.begin();
     nunchuk_init();
     motor.attach(9);
@@ -27,7 +39,7 @@ void setup() {
 
 void loop() {
 
-    //Nunchuk successfully read
+    //Nunchuk is successfully read
     if (nunchuk_read() &&
         filterExtremes(nunchuk_accelX(), nunchuk_accelY(), nunchuk_accelZ(), nunchuk_joystickX(), nunchuk_joystickY()) &&
         (!inTimeout || !isDuplicate())) {
@@ -43,9 +55,13 @@ void loop() {
         motor.write(newSpeed);
         currentSpeed = newSpeed;
 
-      } else {
+      }
+      
+      //If there's an error reading the nunchuk (such as from
+      //disconnection), make sure to time out if needed
+      else {
         if (millis() - lastValidReadTime > timeOut) {
-          motor.writeMicroseconds(1000);
+          motor.writeMicroseconds(minOut);
           if (!inTimeout) Serial.println("Timeout");
           inTimeout = true;
         }
@@ -59,10 +75,6 @@ void loop() {
 //Considers all controller inputs and returns a speed
 //that the board should accelerate/decelerate to
 int getTargetSpeed() {
-  int minIn = 3;
-  int maxIn = 127;
-  int maxOut = 2000;
-  int minOut = 1000;
   int throttle = 0;
 
   //If using Z
@@ -157,19 +169,19 @@ void printSpeedStats() {
 }
 
 void printVars(int xJoy, int yJoy, int xAcc, int yAcc, int zAcc, int zBut, int cBut) {
-  Serial.print("Joysticks: ");
-  Serial.print(xJoy);
-  Serial.print(", ");
-  Serial.print(yJoy);
-  Serial.print(", Acceleration: ");
-  Serial.print(xAcc);
-  Serial.print(", ");
-  Serial.print(yAcc);
-  Serial.print(", ");
-  Serial.print(zAcc);
-  Serial.print(", Buttons: ");
-  Serial.print(zBut);
-  Serial.print(", ");
-  Serial.print(cBut);
+    Serial.print("Joysticks: ");
+    Serial.print(xJoy);
+    Serial.print(", ");
+    Serial.print(yJoy);
+    Serial.print(", Acceleration: ");
+    Serial.print(xAcc);
+    Serial.print(", ");
+    Serial.print(yAcc);
+    Serial.print(", ");
+    Serial.print(zAcc);
+    Serial.print(", Buttons: ");
+    Serial.print(zBut);
+    Serial.print(", ");
+    Serial.print(cBut);
 }
 
