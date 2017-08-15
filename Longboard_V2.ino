@@ -22,7 +22,7 @@ int targetSpeed;
 int newSpeed;
 int numberOfDuplicates = 0;
 unsigned long lastValidReadTime = millis();
-boolean inTimeout = false;
+boolean inTimeout = true;
 int last_xJoy = 0, last_yJoy = 0, last_xAcc = 0, last_yAcc = 0, last_zAcc = 0, last_zBut = 0, last_cBut = 0;
 Servo motor;
 
@@ -155,14 +155,12 @@ bool isDuplicate() {
 //DEBUG FUNCTIONS
 
 void printSpeedStats() {
-    Serial.print("Current: ");
-    Serial.print(currentSpeed);
-    Serial.print(", Target: ");
-    Serial.print(targetSpeed);
-    Serial.print(", New: ");
-    Serial.print(newSpeed);
-    Serial.print(", Nunchuk Raw Reading: ");
+    Serial.print("Joystick: ");
     Serial.print(nunchuk_joystickY());
+    Serial.print("\tSpeed: ");
+    Serial.print(currentSpeed);
+    Serial.print("/");
+    Serial.print(targetSpeed);
     Serial.println("");
 }
 
@@ -181,6 +179,7 @@ void printVars(int xJoy, int yJoy, int xAcc, int yAcc, int zAcc, int zBut, int c
     Serial.print(zBut);
     Serial.print(", ");
     Serial.print(cBut);
+    Serial.println("");
 }
 
 void printNunchukStats() {
