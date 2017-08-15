@@ -79,8 +79,14 @@ int getTargetSpeed() {
 
 int getNewSpeed(int currentSpeed, int targetSpeed) {
   int speedDifference = targetSpeed - currentSpeed;
+  
+  //If close to target, set speed to target
   if (speedDifference > (-1 * maxAcceleration) && speedDifference < maxAcceleration) return targetSpeed;
+
+  //If accelerating...
   else if (speedDifference > 0) return currentSpeed + maxAcceleration;
+
+  //If decelerating...
   else return currentSpeed - maxDeceleration;
 }
 
